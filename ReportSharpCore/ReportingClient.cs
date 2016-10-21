@@ -37,7 +37,7 @@ namespace ReportSharpCore
             
 
             report.Append(@"
-            <table class='table table-responsive table-striped'>");
+            <table class='table table-responsive table-striped' style='width: 800px; table-layout: fixed; word-wrap: break-word;'>");
         
             foreach (var group in groups)
             {

@@ -5,9 +5,37 @@
     xmlns:local="using:ReportSharp"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:bh="using:ReportSharp.Behaviors"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.DataContext>
+        <local:MainViewModel/>
+    </Page.DataContext>
 
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="500" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <ItemsControl Margin="10">
+                <TextBlock Text="Teste de geração de relatórios" Style="{StaticResource HeaderTextBlockStyle}" />
+                <TextBox AcceptsReturn="True" Header="JSON" />
+                <Button Content="Compilar..." >
+                    <i:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="Tapped" >
+                            <core:InvokeCommandAction  />
+                        </core:EventTriggerBehavior>
+                    </i:Interaction.Behaviors>
+                </Button>
+            </ItemsControl>
+        </Grid>
+        <WebView Grid.Column="1" >
+            <i:Interaction.Behaviors>
+                <bh:DynamicWebViewBehavior  />
+            </i:Interaction.Behaviors>
+        </WebView>
     </Grid>
 </Page>
