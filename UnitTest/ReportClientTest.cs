@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ReportSharpCore.Model;
 
 namespace UnitTest
 {
@@ -162,7 +163,7 @@ namespace UnitTest
                 },
             };
 
-            var group = new ReportGroup("Lista de programadores") { Items = list };
+            var group = new ReportGroup("Lista de programadores", list );
             var client = new ReportingClient();
             var strReport = await client.CompileReport(new IReportGroup[] { group });
             Assert.IsTrue(true);

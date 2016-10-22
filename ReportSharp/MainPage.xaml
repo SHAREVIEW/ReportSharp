@@ -21,12 +21,16 @@
         </Grid.ColumnDefinitions>
         <Grid>
             <ItemsControl Margin="10">
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="FrameworkElement">
+                        <Setter Property="Margin" Value="5"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
                 <TextBlock Text="Teste de geração de relatórios" Style="{StaticResource HeaderTextBlockStyle}" />
-                <TextBox AcceptsReturn="True" Header="JSON" />
                 <Button Content="Compilar..." >
                     <i:Interaction.Behaviors>
                         <core:EventTriggerBehavior EventName="Tapped" >
-                            <core:InvokeCommandAction  />
+                            <core:InvokeCommandAction Command="{Binding Compile}" />
                         </core:EventTriggerBehavior>
                     </i:Interaction.Behaviors>
                 </Button>
@@ -34,7 +38,7 @@
         </Grid>
         <WebView Grid.Column="1" >
             <i:Interaction.Behaviors>
-                <bh:DynamicWebViewBehavior  />
+                <bh:DynamicWebViewBehavior HTML="{Binding CompiledHtml}" />
             </i:Interaction.Behaviors>
         </WebView>
     </Grid>

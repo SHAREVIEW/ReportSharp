@@ -108,9 +108,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enum\htmlTag.cs" />
+    <Compile Include="Helper\DictionaryExtensions.cs" />
     <Compile Include="Helper\HtmlStringHelper.cs" />
     <Compile Include="Interface\IReportElement.cs" />
     <Compile Include="Interface\IReportGroup.cs" />
+    <Compile Include="Model\ListHtmlProperties.cs" />
+    <Compile Include="Model\PageSize.cs" />
     <Compile Include="Model\ReportElement.cs" />
     <Compile Include="Model\ReportGroup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -21,7 +21,7 @@ namespace ReportSharp.Behaviors
         }
 
         public static readonly DependencyProperty HTMLProperty =
-            DependencyProperty.Register("HTML", typeof(string), typeof(DynamicWebViewBehavior), new PropertyMetadata(""));
+            DependencyProperty.Register("HTML", typeof(string), typeof(DynamicWebViewBehavior), new PropertyMetadata("", OnHTMLChanged));
 
         public void Attach(DependencyObject associatedObject)
         {

@@ -5,22 +5,31 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ReportSharpCore;
+using ReportSharpCore.Model;
+using Newtonsoft;
+using Newtonsoft.Json;
+using ReportSharpCore.Interface;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Converters;
+using ReportSharpCore.Model;
 
 namespace ReportSharp
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        public IEnumerable<object> Items { get; set; }
 
-        private string strJson;
-        public string StrJson
+        private string compiledHtml;
+        public string CompiledHtml
         {
-            get { return strJson; }
+            get { return compiledHtml; }
             set
             {
-                if (strJson != value)
+                if (compiledHtml != value)
                 {
-                    strJson = value;
-                    RaisePropertyChanged("StrJson");
+                    compiledHtml = value;
+                    RaisePropertyChanged("CompiledHtml");
                 }
             }
         }
@@ -39,7 +48,77 @@ namespace ReportSharp
             }
         }
 
+        public MainViewModel()
+        {
+            Compile = new RelayCommand(async() => {
+                var client = new ReportingClient();
+                var group = new ReportGroup("Relatório de teste", Items);
+                CompiledHtml = await client.CompileReport(new IReportGroup[] { group });
+            });
 
+            Items = new object[] {
+                new {
+                    Nome = "Teste1",
+                    Idade = 22,
+                    Profissao = "Programador"
+                },
+                new {
+                    Nome = "Teste2",
+                    Idade = 22,
+                    Profissao = "Programador"
+                },
+                new {
+                    Nome = "Teste3",
+                    Idade = 22,
+                    Profissao = "Programador"
+                },
+                new {
+                    Nome = "Teste4",
+                    Idade = 22,
+                    Profissao = "Programador"
+                },
+                new {
+                    Nome = "Teste5",
+                    Idade = 22,
+                    Profissao = "Programador"
+                },
+                new {
+                    Nome = "Teste6",
+                    Idade = 22,
+                    Profissao = "Programador"
+                },
+                new {
+                    Nome = "Teste7",
+                    Idade = 22,
+                    Profissao = "Programador"
+                },
+                new {
+                    Nome = "Teste8",
+                    Idade = 22,
+                    Profissao = "Programador"
+                },
+                new {
+                    Nome = "Teste9",
+                    Idade = 22,
+                    Profissao = "Programador"
+                },
+                new {
+                    Nome = "Teste10",
+                    Idade = 22,
+                    Profissao = "Programador"
+                },
+                new {
+                    Nome = "Teste11",
+                    Idade = 22,
+                    Profissao = "Programador"
+                },
+                new {
+                    Nome = "Teste12",
+                    Idade = 22,
+                    Profissao = "Programador"
+                }
+            };
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

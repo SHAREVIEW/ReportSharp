@@ -8,15 +8,13 @@ using System.Collections;
 
 namespace ReportSharpCore.Interface
 {
-    public interface IReportGroup : IEnumerable<object>
+    public interface IReportGroup : IGrouping<string, object>
     {
-        string Key { get; }
         /// <summary>
         /// Key = Column key
         /// Value = HtmlProperties
         /// </summary>
-        Dictionary<string, IEnumerable<string>> Options { get; set; }
-        IEnumerable<IReportGroup> Groups { get; set; }
-        IEnumerable<object> Items { get; set; }
+        Dictionary<string, ListHtmlProperties> Options { get; set; }
+        string ToString();
     }
 }

@@ -13,11 +13,11 @@ namespace ReportSharpCore.Model
     {
         public HtmlTag Tag { get; set; }
         public object Content { get; set; }
-        public IEnumerable<string> HtmlProperties { get; set; }
+        public ListHtmlProperties HtmlProperties { get; set; }
+
         public override string ToString()
         {
-            var properties = HtmlStringHelper.CreateHtmlPropertiesString(HtmlProperties);
-            return string.Format("<{0} {2}> {1} </{0}>", Tag.ToString(), Content?.ToString(), properties);
+            return string.Format("<{0} {2}> {1} </{0}>", Tag.ToString(), Content?.ToString(), HtmlProperties?.ToString());
         }
     }
 }

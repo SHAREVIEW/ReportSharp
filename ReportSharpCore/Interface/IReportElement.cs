@@ -1,4 +1,5 @@
 ﻿using ReportSharpCore.Enum;
+using ReportSharpCore.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace ReportSharpCore.Interface
     {
         HtmlTag Tag { get; set; }
         object Content { get; set; }
-        IEnumerable<string> HtmlProperties { get; set; }
+        ListHtmlProperties HtmlProperties { get; set; }
         string ToString();
     }
 }
