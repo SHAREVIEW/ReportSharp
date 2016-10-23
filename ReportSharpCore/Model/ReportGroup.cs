@@ -15,8 +15,11 @@ namespace ReportSharpCore.Model
     public sealed class ReportGroup : IReportGroup
     {
         public string Key { get; private set; }
-        public Dictionary<string, ListHtmlProperties> Options { get; set; }
+        public Dictionary<string, HtmlOptions> Options { get; set; }
         private IEnumerable<object> Items { get; set; }
+        public HtmlOptions GroupHtmlOptions { get; set; }
+
+        public HtmlTag HeaderSize = HtmlTag.h2;
 
         public ReportGroup(string _key, IEnumerable<object> _items)
         {
@@ -35,18 +38,25 @@ namespace ReportSharpCore.Model
 
         public override string ToString()
         {
-            var headerSize = HtmlTag.h2;
-            System.Enum.TryParse(Options.TryGet("HeaderSize")?.ToString(), out headerSize);
-
-            var headerOptions = Options.TryGet("HeaderOptions")?.ToString();
+            var headerOptions = GroupHtmlOptions?.ToString();
 
             StringBuilder group = new StringBuilder();
             group.Append(@"<table class='table table-responsive table-striped' style='table-layout: fixed; word-wrap: break-word;'>");
-            //Escreve o header do relatório
+            
+            //Get all properties of the object to be printed on the report
             var type = this.First().GetType();
-            var runtimeProperties = type.GetRuntimeProperties();
+            var runtimeProperties = type.GetRuntimeProperties().ToList();
+
+            //Remove invisible columns
+            if (Options?.Any() == true)
+            {
+                var invisibleProperties = Options.Where(t => t.Value.Display == HtmlOptions.DisplayValue.None).Select(t => t.Key);
+                runtimeProperties.RemoveAll(t => invisibleProperties.Contains(t.Name));
+            }
+
+            //Write report header
             var columnCount = runtimeProperties.Count();
-            group.AppendFormat(@"<tr><td colspan='{0}'><h2>{1}</h2></th></tr><tr>", columnCount, Key);
+            group.AppendFormat(@"<tr {2} ><td colspan='{0}'><{3}>{1}</{3}></th></tr><tr>", columnCount, Key, headerOptions, HeaderSize);
             foreach (var name in runtimeProperties.Select(t => t.Name))
             {
                 string properties = Options.TryGet(name)?.ToString();

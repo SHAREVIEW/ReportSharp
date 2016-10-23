@@ -14,7 +14,7 @@ namespace ReportSharpCore.Interface
         /// Key = Column key
         /// Value = HtmlProperties
         /// </summary>
-        Dictionary<string, ListHtmlProperties> Options { get; set; }
+        Dictionary<string, HtmlOptions> Options { get; set; }
         string ToString();
     }
 }

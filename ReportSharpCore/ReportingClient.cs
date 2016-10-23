@@ -12,22 +12,22 @@ namespace ReportSharpCore
 {
     public class ReportingClient
     {
-        public async Task<string> CompileReport(IEnumerable<IReportGroup> groups, IEnumerable<ReportElement> PreTableElements = null, IEnumerable<ReportElement> PostTableElements = null)
+        public async Task<string> Render(IEnumerable<IReportGroup> groups, HtmlOptions reportOptions = null, IEnumerable<ReportElement> PreTableElements = null, IEnumerable<ReportElement> PostTableElements = null)
         {
             return await Task.Run(() =>
             {
                 StringBuilder report = new StringBuilder();
-                report.Append(@"
+                report.AppendFormat(@"
                 <!DOCTYPE html>
                 <html>
                 <head>
                   <title> Report </title>
-                    <meta charset = 'utf-8'>
-                    <meta name = 'viewport' content = 'width=device-width, initial-scale=1'>
-                    <link rel = 'stylesheet' href = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'>
+                  <meta charset = 'utf-8'>
+                  <meta name = 'viewport' content = 'width=device-width, initial-scale=1'>
+                  <link rel = 'stylesheet' href = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'>
                 </head>
                 <body>
-                    <div class='conteiner'>");
+                    <div {0}>", reportOptions?.ToString());
 
                 if (PreTableElements?.Any() == true)
                 {
@@ -37,16 +37,11 @@ namespace ReportSharpCore
                     }
                 }
 
-
-                report.Append(@"
-                <table class='table table-responsive table-striped' style='width: 800px; table-layout: fixed; word-wrap: break-word;'>");
-
                 foreach (var group in groups)
                 {
                     if (group.Any())
                     {
-                        
-
+                        report.Append(group.ToString());
                     }
                 }
 
@@ -59,8 +54,7 @@ namespace ReportSharpCore
                 }
 
                 report.Append(@"
-                </table>
-                </div>
+                    </div>
                 </body>
                 </html>");
 

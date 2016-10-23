@@ -12,7 +12,7 @@ namespace ReportSharpCore.Interface
     {
         HtmlTag Tag { get; set; }
         object Content { get; set; }
-        ListHtmlProperties HtmlProperties { get; set; }
+        HtmlOptions HtmlProperties { get; set; }
         string ToString();
     }
 }

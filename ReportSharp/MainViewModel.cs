@@ -53,7 +53,9 @@ namespace ReportSharp
             Compile = new RelayCommand(async() => {
                 var client = new ReportingClient();
                 var group = new ReportGroup("Relatório de teste", Items);
-                CompiledHtml = await client.CompileReport(new IReportGroup[] { group });
+                group.Options = new Dictionary<string, HtmlOptions>();
+                group.Options.Add("Nome", new HtmlOptions { Color = "red" });
+                CompiledHtml = await client.Render(new IReportGroup[] { group });
             });
 
             Items = new object[] {

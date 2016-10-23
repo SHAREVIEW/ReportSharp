@@ -165,7 +165,7 @@ namespace UnitTest
 
             var group = new ReportGroup("Lista de programadores", list );
             var client = new ReportingClient();
-            var strReport = await client.CompileReport(new IReportGroup[] { group });
+            var strReport = await client.Render(new IReportGroup[] { group });
             Assert.IsTrue(true);
         }
     }

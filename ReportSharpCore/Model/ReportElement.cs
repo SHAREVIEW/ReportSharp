@@ -13,7 +13,7 @@ namespace ReportSharpCore.Model
     {
         public HtmlTag Tag { get; set; }
         public object Content { get; set; }
-        public ListHtmlProperties HtmlProperties { get; set; }
+        public HtmlOptions HtmlProperties { get; set; }
 
         public override string ToString()
         {
