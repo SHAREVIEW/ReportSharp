@@ -8,13 +8,12 @@ using System.Collections;
 
 namespace ReportSharpCore.Interface
 {
-    public interface IReportGroup : IGrouping<string, object>
+    public interface IReportGroup : IGrouping<string, object>, IReportElement
     {
         /// <summary>
         /// Key = Column key
         /// Value = HtmlProperties
         /// </summary>
-        Dictionary<string, HtmlOptions> Options { get; set; }
-        string ToString();
+        IReportElement GroupHeader { get; set; }
     }
 }

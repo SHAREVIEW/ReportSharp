@@ -9,22 +9,34 @@ using System.Reflection;
 using ReportSharpCore.Model;
 using ReportSharpCore.Enum;
 using ReportSharpCore.Helper;
+using Windows.Storage;
 
 namespace ReportSharpCore.Model
 {
+    [System.Runtime.InteropServices.Guid("8D5CD28E-DD4E-4D91-AAA6-4F97A1A86E18")]
     public sealed class ReportGroup : IReportGroup
     {
         public string Key { get; private set; }
         public Dictionary<string, HtmlOptions> Options { get; set; }
         private IEnumerable<object> Items { get; set; }
-        public HtmlOptions GroupHtmlOptions { get; set; }
+        public IReportElement GroupHeader { get; set; }
+        private Dictionary<string, string> compiledOptions { get; set; }
 
-        public HtmlTag HeaderSize = HtmlTag.h2;
-
-        public ReportGroup(string _key, IEnumerable<object> _items)
+        public HtmlTag Tag { get; set; }
+        public object Content { get; set; }
+        public HtmlOptions HtmlProperties { get; set; }
+        public Func<string> GetContent { get; set; }
+        public ReportGroup(string _key, IEnumerable<object> _items, HtmlTag _tag = HtmlTag.table, HtmlOptions _groupOptions = null)
         {
             Key = _key;
             Items = _items;
+            Tag = _tag;
+            HtmlProperties = _groupOptions == null ? new HtmlOptions
+            {
+                CssClass = "table table-responsive table-striped",
+                TableLayout = HtmlOptions.TableLayoutValue.Fixed,
+                WordWrap = HtmlOptions.WordWrapValue.BreakWord
+            } : _groupOptions;
         }
 
         public IEnumerator<object> GetEnumerator()
@@ -36,47 +48,94 @@ namespace ReportSharpCore.Model
             return Items?.GetEnumerator();
         }
 
-        public override string ToString()
+        public async Task<string> RenderToStringAsync()
         {
-            var headerOptions = GroupHtmlOptions?.ToString();
-
-            StringBuilder group = new StringBuilder();
-            group.Append(@"<table class='table table-responsive table-striped' style='table-layout: fixed; word-wrap: break-word;'>");
-            
-            //Get all properties of the object to be printed on the report
-            var type = this.First().GetType();
-            var runtimeProperties = type.GetRuntimeProperties().ToList();
-
-            //Remove invisible columns
-            if (Options?.Any() == true)
-            {
-                var invisibleProperties = Options.Where(t => t.Value.Display == HtmlOptions.DisplayValue.None).Select(t => t.Key);
-                runtimeProperties.RemoveAll(t => invisibleProperties.Contains(t.Name));
-            }
-
-            //Write report header
-            var columnCount = runtimeProperties.Count();
-            group.AppendFormat(@"<tr {2} ><td colspan='{0}'><{3}>{1}</{3}></th></tr><tr>", columnCount, Key, headerOptions, HeaderSize);
-            foreach (var name in runtimeProperties.Select(t => t.Name))
-            {
-                string properties = Options.TryGet(name)?.ToString();
-                group.AppendFormat(@"<th {0} >{1}</th>", properties, name);
-            }
-            group.Append(@"</tr>");
-
-            //Escreve conteúdo do relatório
-            foreach (var item in this)
-            {
-                group.Append(@"<tr>");
-                var values = runtimeProperties.Select(t => t.GetValue(item));
-                foreach (var value in values)
+            return await Task.Run(async () => {
+                if (GetContent != null)
                 {
-                    group.AppendFormat(@"<td>{0}</td>", value);
+                    Content = GetContent?.Invoke();
                 }
-                group.Append(@"</tr>");
-            }
-            group.Append(@"</table>");
-            return group.ToString();
+                else
+                {
+                    Content = await CompileContentAsync();
+                }
+                return string.Format("<{0} {2}> {1} </{0}>", Tag.ToString(), Content?.ToString(), HtmlProperties?.ToString());
+            });
+        }
+
+        private async Task<string> CompileContentAsync()
+        {
+            return await Task.Run(() => {
+                StringBuilder content = new StringBuilder();
+                compiledOptions = new Dictionary<string, string>();
+
+                if (Options?.Any() == true)
+                {
+                    foreach (var opt in Options)
+                    {
+                        compiledOptions.Add(opt.Key, opt.Value?.ToString());
+                    }
+                }
+                //Get all properties of the object to be printed on the report
+                var type = this.First().GetType();
+                var runtimeProperties = type.GetRuntimeProperties().ToList();
+
+                //Remove invisible columns
+                if (Options?.Any() == true)
+                {
+                    var invisibleProperties = Options.Where(t => t.Value.Display == HtmlOptions.DisplayValue.None).Select(t => t.Key);
+                    runtimeProperties.RemoveAll(t => invisibleProperties.Contains(t.Name));
+                }
+
+                //Write report header
+                var columnCount = runtimeProperties.Count();
+
+                GroupHeader = GroupHeader == null ? new ReportElement
+                {
+                    Tag = HtmlTag.h2,
+                    Content = Key,
+                } : GroupHeader;
+
+                content.AppendFormat(@"<tr ><td colspan='{0}'>{1}</th></tr><tr>", columnCount, GroupHeader.ToString());
+                foreach (var name in runtimeProperties.Select(t => t.Name))
+                {
+                    string properties = TryGetHead(name);
+                    content.AppendFormat(@"<th {0} >{1}</th>", properties, name);
+                }
+                content.Append(@"</tr>");
+
+                //Escreve conteúdo do relatório
+                foreach (var item in this)
+                {
+                    content.Append(@"<tr>");
+                    foreach (var property in runtimeProperties)
+                    {
+                        var value = property.GetValue(item);
+                        string properties = TryGetBody(property.Name);
+                        content.AppendFormat(@"<td {1} >{0}</td>", value, properties);
+                    }
+                    content.Append(@"</tr>");
+                }
+                return content.ToString();
+            });
+        }
+
+        private string TryGetBody(string _key)
+        {
+            return TryGet(_key, "body");
+        }
+
+        private string TryGetHead(string _key)
+        {
+            return TryGet(_key, "head");
+        }
+
+        private string TryGet(string _key, string scope)
+        {
+            var property = compiledOptions.TryGet(_key + "_" + scope);
+            if(property == null)
+                property = compiledOptions.TryGet(_key);
+            return property;
         }
     }
 }

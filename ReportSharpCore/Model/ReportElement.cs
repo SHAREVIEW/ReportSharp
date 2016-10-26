@@ -14,10 +14,17 @@ namespace ReportSharpCore.Model
         public HtmlTag Tag { get; set; }
         public object Content { get; set; }
         public HtmlOptions HtmlProperties { get; set; }
+        public Func<string> GetContent { get; set; }
 
-        public override string ToString()
+        public async Task<string> RenderToStringAsync()
         {
-            return string.Format("<{0} {2}> {1} </{0}>", Tag.ToString(), Content?.ToString(), HtmlProperties?.ToString());
+            return await Task.Run(() => {
+                if (GetContent != null)
+                {
+                    Content = GetContent.Invoke();
+                }
+                return string.Format("<{0} {2}> {1} </{0}>", Tag.ToString(), Content?.ToString(), HtmlProperties?.ToString());
+            });
         }
     }
 }

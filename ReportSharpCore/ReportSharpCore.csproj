@@ -110,12 +110,14 @@
     <Compile Include="Enum\htmlTag.cs" />
     <Compile Include="Helper\DictionaryExtensions.cs" />
     <Compile Include="Helper\HtmlStringHelper.cs" />
+    <Compile Include="Helper\StorageFileExtensions.cs" />
     <Compile Include="Interface\IReportElement.cs" />
     <Compile Include="Interface\IReportGroup.cs" />
     <Compile Include="Model\HtmlOptions.cs" />
     <Compile Include="Model\PageSize.cs" />
     <Compile Include="Model\ReportElement.cs" />
     <Compile Include="Model\ReportGroup.cs" />
+    <Compile Include="Model\ReportSection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportingClient.cs" />
     <EmbeddedResource Include="Properties\ReportSharpCore.rd.xml" />
